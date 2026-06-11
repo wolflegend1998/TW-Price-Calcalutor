@@ -2,44 +2,42 @@ import pricing from '../pricing.json';
 import { CalculatorState, QuoteResult } from '../types';
 
 export const calculateQuote = (state: CalculatorState): QuoteResult => {
-  const customerTypeKey = state.customerType === 'portIn' ? 'portIn' : 'newNumber';
-  const linePricing = pricing.linePrices[state.numberOfLines as keyof typeof pricing.linePrices];
-  const linePrice = linePricing[customerTypeKey as keyof typeof linePricing];
-
   const deviceInfo = pricing.deviceTypes[state.deviceType as keyof typeof pricing.deviceTypes];
   const planInfo = pricing.plans[state.plan as keyof typeof pricing.plans];
-
+  
+  // Get the number of lines
+  const numLines = parseInt(state.numberOfLines);
+  const lineCountKey = numLines >= 5 ? '5plus' : state.numberOfLines;
+  
+  // Get the plan price for this number of lines
+  const planPricing = planInfo.pricing as Record<string, number>;
+  const pricePerLine = planPricing[lineCountKey as keyof typeof planPricing] || planPricing['1'];
+  
   // Calculate monthly costs
-  let monthlyLinesCost = linePrice * parseInt(state.numberOfLines);
-  let monthlyDeviceAddOn = deviceInfo.monthlyAddOn * parseInt(state.numberOfLines);
-  let monthlyPlanCost = planInfo.monthlyPrice * parseInt(state.numberOfLines);
+  let monthlyPlanCost = pricePerLine * numLines;
+  let monthlyDeviceAddOn = deviceInfo.monthlyAddOn * numLines;
   
-  let monthlyHomeInternet = 0;
-  let homeInternetDiscount = 0;
-  
+  let monthlyFWA = 0;
   if (state.homeInternet) {
-    monthlyHomeInternet = pricing.homeInternet.monthlyPrice;
-    homeInternetDiscount = pricing.homeInternet.discount;
+    monthlyFWA = 35; // Add-on FWA pricing
   }
 
   let autoPayDiscount = 0;
   if (state.autoPay) {
-    autoPayDiscount = pricing.autoPay.discount;
+    autoPayDiscount = pricing.autoPay.discount * numLines;
   }
 
   // Calculate subtotal for monthly
   let monthlySubtotal = 
-    monthlyLinesCost + 
-    monthlyDeviceAddOn + 
     monthlyPlanCost + 
-    monthlyHomeInternet - 
-    autoPayDiscount - 
-    homeInternetDiscount;
+    monthlyDeviceAddOn + 
+    monthlyFWA - 
+    autoPayDiscount;
 
-  // Calculate taxes
+  // Calculate taxes (8% default)
   let monthlyTaxes = 0;
   if (state.includeTaxes) {
-    monthlyTaxes = Math.round(monthlySubtotal * pricing.taxRate * 100) / 100;
+    monthlyTaxes = Math.round(monthlySubtotal * 0.08 * 100) / 100;
   }
 
   const monthlyPrice = monthlySubtotal + monthlyTaxes;
@@ -47,20 +45,18 @@ export const calculateQuote = (state: CalculatorState): QuoteResult => {
   // Calculate due today (first month + device cost + processing fee)
   const dueToday = 
     monthlyPrice + 
-    (deviceInfo.deviceCost * parseInt(state.numberOfLines)) + 
+    (deviceInfo.deviceCost * numLines) + 
     pricing.processingFee;
 
   return {
     monthlyPrice: Math.round(monthlyPrice * 100) / 100,
     dueToday: Math.round(dueToday * 100) / 100,
     breakdown: {
-      linesCost: monthlyLinesCost,
-      deviceCost: deviceInfo.deviceCost * parseInt(state.numberOfLines),
-      monthlyDeviceAddOn: monthlyDeviceAddOn,
       planCost: monthlyPlanCost,
-      homeInternetCost: monthlyHomeInternet,
+      deviceCost: deviceInfo.deviceCost * numLines,
+      monthlyDeviceAddOn: monthlyDeviceAddOn,
+      fwaCost: monthlyFWA,
       autoPayDiscount: autoPayDiscount,
-      homeInternetDiscount: homeInternetDiscount,
       subtotal: monthlySubtotal,
       taxes: monthlyTaxes,
       processingFee: pricing.processingFee,
