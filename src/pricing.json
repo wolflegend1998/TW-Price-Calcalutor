@@ -1,0 +1,73 @@
+{
+  "linePrices": {
+    "1": {
+      "portIn": 35,
+      "newNumber": 45
+    },
+    "2": {
+      "portIn": 30,
+      "newNumber": 40
+    },
+    "3": {
+      "portIn": 25,
+      "newNumber": 35
+    },
+    "4": {
+      "portIn": 20,
+      "newNumber": 30
+    },
+    "5plus": {
+      "portIn": 18,
+      "newNumber": 28
+    }
+  },
+  "deviceTypes": {
+    "smartphone": {
+      "name": "Smartphone",
+      "deviceCost": 199,
+      "monthlyAddOn": 15
+    },
+    "basic": {
+      "name": "Basic Phone",
+      "deviceCost": 49,
+      "monthlyAddOn": 5
+    },
+    "tablet": {
+      "name": "Tablet",
+      "deviceCost": 299,
+      "monthlyAddOn": 20
+    },
+    "noDevice": {
+      "name": "No Device",
+      "deviceCost": 0,
+      "monthlyAddOn": 0
+    }
+  },
+  "plans": {
+    "unlimited": {
+      "name": "Unlimited Plan",
+      "monthlyPrice": 65
+    },
+    "50gb": {
+      "name": "50GB Plan",
+      "monthlyPrice": 55
+    },
+    "30gb": {
+      "name": "30GB Plan",
+      "monthlyPrice": 45
+    },
+    "10gb": {
+      "name": "10GB Plan",
+      "monthlyPrice": 35
+    }
+  },
+  "homeInternet": {
+    "monthlyPrice": 60,
+    "discount": 10
+  },
+  "autoPay": {
+    "discount": 5
+  },
+  "taxRate": 0.08,
+  "processingFee": 29.99
+}
