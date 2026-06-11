@@ -3,11 +3,11 @@ import { CalculatorState, QuoteResult } from '../types';
 
 export const calculateQuote = (state: CalculatorState): QuoteResult => {
   const customerTypeKey = state.customerType === 'portIn' ? 'portIn' : 'newNumber';
-  const linePricing = pricing.linePrices[state.numberOfLines];
+  const linePricing = pricing.linePrices[state.numberOfLines as keyof typeof pricing.linePrices];
   const linePrice = linePricing[customerTypeKey as keyof typeof linePricing];
 
-  const deviceInfo = pricing.deviceTypes[state.deviceType];
-  const planInfo = pricing.plans[state.plan];
+  const deviceInfo = pricing.deviceTypes[state.deviceType as keyof typeof pricing.deviceTypes];
+  const planInfo = pricing.plans[state.plan as keyof typeof pricing.plans];
 
   // Calculate monthly costs
   let monthlyLinesCost = linePrice * parseInt(state.numberOfLines);
