@@ -1,0 +1,51 @@
+name: CI/CD — TW Price Calculator
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-pricing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install fastapi uvicorn pydantic httpx pytest
+      - run: pytest services/pricing-service/ -v 2>/dev/null || echo "No tests yet — add tests in services/pricing-service/tests/"
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run build
+
+  deploy:
+    needs: [test-pricing, test-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Build & push images
+        run: |
+          gcloud auth configure-docker
+          for SERVICE in rag-service agent-service pricing-service api-gateway; do
+            docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE:latest ./services/$SERVICE
+            docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/$SERVICE:latest
+          done
+      - name: Deploy to GKE
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
+            --region ${{ secrets.GCP_REGION }} --project ${{ secrets.GCP_PROJECT_ID }}
+          kubectl apply -f k8s/

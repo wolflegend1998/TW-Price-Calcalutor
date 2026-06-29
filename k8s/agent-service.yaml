@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-service
+  namespace: tw-calculator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: agent-service
+  template:
+    metadata:
+      labels:
+        app: agent-service
+    spec:
+      containers:
+      - name: agent-service
+        image: gcr.io/YOUR_PROJECT_ID/agent-service:latest
+        ports:
+        - containerPort: 8002
+        env:
+        - name: ANTHROPIC_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tw-secrets
+              key: anthropic-api-key
+        - name: RAG_SERVICE_URL
+          value: "http://rag-service:8001"
+        - name: PRICING_SERVICE_URL
+          value: "http://pricing-service:8003"
+        resources:
+          requests: { memory: "256Mi", cpu: "250m" }
+          limits:   { memory: "512Mi", cpu: "1000m" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-service
+  namespace: tw-calculator
+spec:
+  selector:
+    app: agent-service
+  ports:
+  - port: 8002
+    targetPort: 8002
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agent-service-hpa
+  namespace: tw-calculator
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agent-service
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60

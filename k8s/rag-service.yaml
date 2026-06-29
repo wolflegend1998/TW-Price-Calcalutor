@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-service
+  namespace: tw-calculator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rag-service
+  template:
+    metadata:
+      labels:
+        app: rag-service
+    spec:
+      containers:
+      - name: rag-service
+        image: gcr.io/YOUR_PROJECT_ID/rag-service:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: CHROMA_HOST
+          value: "chromadb-service"
+        resources:
+          requests: { memory: "256Mi", cpu: "250m" }
+          limits:   { memory: "512Mi", cpu: "500m" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-service
+  namespace: tw-calculator
+spec:
+  selector:
+    app: rag-service
+  ports:
+  - port: 8001
+    targetPort: 8001

@@ -1,0 +1,104 @@
+{
+  "deviceTypes": {
+    "byo": {
+      "name": "Bring Your Own Device",
+      "deviceCost": 0,
+      "monthlyAddOn": 0
+    },
+    "smartphone": {
+      "name": "Smartphone",
+      "deviceCost": 0,
+      "monthlyAddOn": 0
+    },
+    "tablet_base": {
+      "name": "Tablet (Base)",
+      "deviceCost": 50,
+      "monthlyAddOn": 10
+    },
+    "tablet_5g": {
+      "name": "Tablet (5G)",
+      "deviceCost": 60,
+      "monthlyAddOn": 20
+    },
+    "fwa_addon": {
+      "name": "FWA/Home Internet (Add-on)",
+      "deviceCost": 0,
+      "monthlyAddOn": 35
+    },
+    "fwa_standalone": {
+      "name": "FWA/Home Internet (Standalone)",
+      "deviceCost": 0,
+      "monthlyAddOn": 60
+    },
+    "mobile_broadband_30": {
+      "name": "Mobile Broadband ($30)",
+      "deviceCost": 0,
+      "monthlyAddOn": 30
+    },
+    "mobile_broadband_40": {
+      "name": "Mobile Broadband ($40)",
+      "deviceCost": 0,
+      "monthlyAddOn": 40
+    },
+    "mobile_broadband_50": {
+      "name": "Mobile Broadband ($50)",
+      "deviceCost": 0,
+      "monthlyAddOn": 50
+    }
+  },
+  "plans": {
+    "max_5g_byo": {
+      "name": "Total MAX 5G BYO",
+      "description": "Bring Your Own Device - Truly Unlimited 5G + UWB",
+      "pricing": {
+        "1": 30,
+        "2": 30,
+        "3": 30,
+        "4": 30,
+        "5plus": 30
+      },
+      "features": "Truly Unlimited data on 5G + UWB, Unlimited 5Mbps hotspot, 100GB cloud storage, 140+ countries roaming, 6 months Disney+"
+    },
+    "starter": {
+      "name": "Total STARTER",
+      "description": "Entry-level 5G Plan",
+      "pricing": {
+        "1": 40,
+        "2": 32.50,
+        "3": 30,
+        "4": 25,
+        "5plus": 30
+      },
+      "features": "5G Nationwide, 10GB hotspot, Canada & Mexico roaming"
+    },
+    "max_5g": {
+      "name": "Total MAX 5G",
+      "description": "Truly Unlimited 5G + UWB",
+      "pricing": {
+        "1": 55,
+        "2": 42.50,
+        "3": 33.33,
+        "4": 27.50,
+        "5plus": 30
+      },
+      "features": "Truly Unlimited 5G + UWB, Unlimited 5Mbps hotspot, 100GB cloud storage, 140+ countries roaming, 6 months Disney+"
+    },
+    "all_access": {
+      "name": "Total ALL ACCESS",
+      "description": "Premium Unlimited 5G Plan",
+      "pricing": {
+        "1": 65,
+        "2": 47.50,
+        "3": 36.67,
+        "4": 30,
+        "5plus": 30
+      },
+      "features": "Truly Unlimited 5G + UWB, Unlimited 10Mbps hotspot, 1TB cloud storage, 140+ countries roaming, Disney+ included"
+    }
+  },
+  "autoPay": {
+    "discount": 5
+  },
+  "processingFee": 29.99,
+  "priceGuarantee": "5-year price guarantee included with all plans"
+}
